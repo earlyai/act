@@ -1,0 +1,32 @@
+name: Generate Tests with EarlyAI
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  generate-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/earlyai/early-github-action
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          set-safe-directory: true
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate tests with EarlyAI
+        uses: earlyai/act@main
+        with:
+          branch: ${{ github.head_ref }}
+        secrets:
+          EARLY_SECRET_TOKEN: ${{ secrets.EARLY_SECRET_TOKEN }} 
