@@ -43,8 +43,8 @@ jobs:
 
       - name: Generate tests with EarlyAI
         uses: earlyai/act@main
-        secrets:
-          EARLY_SECRET_TOKEN: ${{ secrets.EARLY_SECRET_TOKEN }}
+        with:
+          early-secret-token: ${{ secrets.EARLY_SECRET_TOKEN }}
 ```
 
 ## Inputs
@@ -52,12 +52,7 @@ jobs:
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `branch` | Branch to commit generated files to | No | `${{ github.head_ref }}` |
-
-## Secrets
-
-| Secret | Description | Required |
-|--------|-------------|----------|
-| `EARLY_SECRET_TOKEN` | EarlyAI access token | Yes |
+| `early-secret-token` | EarlyAI access token | Yes | - |
 
 ## Requirements
 

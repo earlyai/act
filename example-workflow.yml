@@ -28,5 +28,4 @@ jobs:
         uses: earlyai/act@main
         with:
           branch: ${{ github.head_ref }}
-        secrets:
-          EARLY_SECRET_TOKEN: ${{ secrets.EARLY_SECRET_TOKEN }} 
+          early-secret-token: ${{ secrets.EARLY_SECRET_TOKEN }} 

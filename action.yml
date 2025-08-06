@@ -6,9 +6,7 @@ inputs:
     description: 'Branch to commit generated files to'
     required: false
     default: '${{ github.head_ref }}'
-
-secrets:
-  EARLY_SECRET_TOKEN:
+  early-secret-token:
     description: 'EarlyAI access token'
     required: true
 
@@ -70,7 +68,7 @@ runs:
       shell: bash
       run: /entrypoint.sh
       env:
-        EARLY_ACCESS_TOKEN: ${{ secrets.EARLY_SECRET_TOKEN }}
+        EARLY_ACCESS_TOKEN: ${{ inputs.early-secret-token }}
         EARLY_ACTION: generate_tests
 
     - name: Auto-commit generated files
