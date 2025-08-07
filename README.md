@@ -1,6 +1,6 @@
-# EarlyAI Test Generator
+# Early Catch for Unit Test Generation
 
-A composite GitHub Action that automatically generates tests for modified TypeScript files in pull requests using EarlyAI CLI.
+A composite GitHub Action that automatically generates unit tests for modified TypeScript files in pull requests using Early Catch CLI.
 
 ## Features
 
