@@ -64,6 +64,12 @@ runs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
+    - name: Create tests_runner_config.json
+      id: write-config
+      shell: bash
+      run: |
+        printf '%s' '${{ steps.generate-json.outputs.result }}' > tests_runner_config.json
+
     - name: Run EarlyAI CLI
       shell: bash
       run: /entrypoint.sh
