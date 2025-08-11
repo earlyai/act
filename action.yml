@@ -1,17 +1,25 @@
-name: 'EarlyAI Test Generator'
-description: 'Generate tests using EarlyAI CLI for modified TypeScript files in a pull request'
+name: "EarlyAI Test Generator"
+description: "Generate tests using EarlyAI CLI for modified TypeScript files in a pull request"
 
 inputs:
   branch:
-    description: 'Branch to commit generated files to'
+    description: "Branch to commit generated files to"
     required: false
-    default: '${{ github.head_ref }}'
+    default: "${{ github.head_ref }}"
   early-secret-token:
-    description: 'EarlyAI access token'
+    description: "EarlyAI access token"
     required: true
+  test-structure:
+    description: "Test file structure: rootFolder or siblingFolder"
+    required: false
+    default: ""
+  test-file-name:
+    description: "Test file naming convention: camelCase or kebabCase"
+    required: false
+    default: ""
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Mark git directory as safe
       shell: bash
@@ -26,20 +34,20 @@ runs:
           echo "Error: No pull request context found"
           exit 1
         fi
-        
+
         # Get the repository information
         REPO_OWNER="${{ github.repository_owner }}"
         REPO_NAME="${{ github.event.repository.name }}"
         PR_NUMBER="${{ github.event.pull_request.number }}"
-        
+
         # Create the git repo URL
         GIT_REPO="https://github.com/${REPO_OWNER}/${REPO_NAME}.git"
-        
+
         echo "Fetching files from PR #${PR_NUMBER}..."
-        
+
         # Create a temporary file to store the JSON output
         TEMP_FILE=$(mktemp)
-        
+
         # Use GitHub CLI to get PR files and process them with jq
         # The GITHUB_TOKEN is automatically available in GitHub Actions
         gh api repos/${REPO_OWNER}/${REPO_NAME}/pulls/${PR_NUMBER}/files --paginate | \
@@ -50,15 +58,15 @@ runs:
            select(.filename | (contains("__tests__/") | not) and (endswith(".spec.ts") | not) and (endswith(".test.ts") | not)) | 
            {file: .filename, names: ["*"]}
           ] | {git_repo: $git_repo, paths: .}' > "${TEMP_FILE}"
-        
+
         # Set the output using the proper GitHub Actions syntax
         echo "result<<EOF" >> $GITHUB_OUTPUT
         cat "${TEMP_FILE}" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
-        
+
         echo "Generated test runner config:"
         cat "${TEMP_FILE}"
-        
+
         # Clean up
         rm -f "${TEMP_FILE}"
       env:
@@ -70,6 +78,8 @@ runs:
       env:
         EARLY_ACCESS_TOKEN: ${{ inputs.early-secret-token }}
         EARLY_ACTION: generate_tests
+        EARLY_TEST_STRUCTURE: ${{ inputs.test-structure }}
+        EARLY_TEST_FILE_NAME: ${{ inputs.test-file-name }}
 
     - name: Auto-commit generated files
       shell: bash
@@ -85,4 +95,4 @@ runs:
           echo "Successfully committed generated test files"
         else
           echo "No generated test files found to commit"
-        fi 
+        fi
