@@ -17,6 +17,10 @@ inputs:
     description: "Test file naming convention: camelCase or kebabCase"
     required: false
     default: ""
+  coverage-threshold:
+    description: "Coverage threshold to not above which to not generate tests. between 0 and 100"
+    required: false
+    default: 0
 
 runs:
   using: "composite"
@@ -64,9 +68,6 @@ runs:
         cat "${TEMP_FILE}" >> $GITHUB_OUTPUT
         echo "EOF" >> $GITHUB_OUTPUT
 
-        echo "Generated test runner config:"
-        cat "${TEMP_FILE}"
-
         # Clean up
         rm -f "${TEMP_FILE}"
       env:
@@ -86,6 +87,7 @@ runs:
         EARLY_ACTION: generate_tests
         EARLY_TEST_STRUCTURE: ${{ inputs.test-structure }}
         EARLY_TEST_FILE_NAME: ${{ inputs.test-file-name }}
+        EARLY_COVERAGE_THRESHOLD: ${{ inputs.coverage-threshold }}
 
     - name: Auto-commit generated files
       shell: bash
